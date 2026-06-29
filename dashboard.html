@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Automation Practice — Dashboard</title>
+<link rel="stylesheet" href="shared.css"/>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>🎭 Automation Practice</h1>
+    <p>30 sections · 120+ elements · Playwright &amp; Selenium · JavaScript / TypeScript</p>
+  </div>
+  <div class="badge-row">
+    <span class="badge">Playwright</span>
+    <span class="badge">Selenium</span>
+    <span class="badge">TypeScript</span>
+    <span class="badge">POM</span>
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" data-testid="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+
+<div class="container">
+  <div style="margin-bottom:1.5rem">
+    <h2 style="font-size:1.1rem;font-weight:700;color:var(--text)">Select a Practice Section</h2>
+    <p style="font-size:13px;color:var(--muted);margin-top:4px">Each section lives on its own page — map each to a Page Object class in your framework.</p>
+  </div>
+
+  <div class="section-grid" data-testid="section-grid">
+    <a class="section-card" href="page01.html" data-testid="card-01">
+      <div class="num">01</div><div class="info"><div class="title">Basic Form Elements</div><div class="desc">Text, email, password, textarea, submit</div></div>
+    </a>
+    <a class="section-card" href="page02.html" data-testid="card-02">
+      <div class="num">02</div><div class="info"><div class="title">Button Interactions</div><div class="desc">Single, double, right-click, delayed, relabel</div></div>
+    </a>
+    <a class="section-card" href="page03.html" data-testid="card-03">
+      <div class="num">03</div><div class="info"><div class="title">Checkboxes &amp; Radio</div><div class="desc">Select-all, groups, reveal-on-check</div></div>
+    </a>
+    <a class="section-card" href="page04.html" data-testid="card-04">
+      <div class="num">04</div><div class="info"><div class="title">Dropdowns</div><div class="desc">Standard, multi, custom div, country autocomplete</div></div>
+    </a>
+    <a class="section-card" href="page05.html" data-testid="card-05">
+      <div class="num">05</div><div class="info"><div class="title">Locator Practice</div><div class="desc">id, class, testid, aria, XPath axes</div></div>
+    </a>
+    <a class="section-card" href="page06.html" data-testid="card-06">
+      <div class="num">06</div><div class="info"><div class="title">Dynamic Content</div><div class="desc">Delay, disappear, counter, inject</div></div>
+    </a>
+    <a class="section-card" href="page07.html" data-testid="card-07">
+      <div class="num">07</div><div class="info"><div class="title">Waits &amp; Sync</div><div class="desc">Spinner, progress bar, AJAX simulation</div></div>
+    </a>
+    <a class="section-card" href="page08.html" data-testid="card-08">
+      <div class="num">08</div><div class="info"><div class="title">Table Automation</div><div class="desc">Sort, search, filter, pagination</div></div>
+    </a>
+    <a class="section-card" href="page09.html" data-testid="card-09">
+      <div class="num">09</div><div class="info"><div class="title">Alerts</div><div class="desc">alert(), confirm(), prompt()</div></div>
+    </a>
+    <a class="section-card" href="page10.html" data-testid="card-10">
+      <div class="num">10</div><div class="info"><div class="title">Modal Dialog</div><div class="desc">Open, close via X / button / overlay</div></div>
+    </a>
+    <a class="section-card" href="page11.html" data-testid="card-11">
+      <div class="num">11</div><div class="info"><div class="title">iFrame</div><div class="desc">Switch context, interact inside frame</div></div>
+    </a>
+    <a class="section-card" href="page12.html" data-testid="card-12">
+      <div class="num">12</div><div class="info"><div class="title">Shadow DOM</div><div class="desc">Pierce shadow root, input &amp; button</div></div>
+    </a>
+    <a class="section-card" href="page13.html" data-testid="card-13">
+      <div class="num">13</div><div class="info"><div class="title">Drag &amp; Drop</div><div class="desc">Native HTML5 drag and drop</div></div>
+    </a>
+    <a class="section-card" href="page14.html" data-testid="card-14">
+      <div class="num">14</div><div class="info"><div class="title">Hover Menu</div><div class="desc">Hover to reveal submenu items</div></div>
+    </a>
+    <a class="section-card" href="page15.html" data-testid="card-15">
+      <div class="num">15</div><div class="info"><div class="title">Tooltip</div><div class="desc">Hover trigger, read tooltip text</div></div>
+    </a>
+    <a class="section-card" href="page16.html" data-testid="card-16">
+      <div class="num">16</div><div class="info"><div class="title">File Upload</div><div class="desc">Upload and assert file name</div></div>
+    </a>
+    <a class="section-card" href="page17.html" data-testid="card-17">
+      <div class="num">17</div><div class="info"><div class="title">Download</div><div class="desc">Trigger download, assert completion</div></div>
+    </a>
+    <a class="section-card" href="page18.html" data-testid="card-18">
+      <div class="num">18</div><div class="info"><div class="title">Hidden Elements</div><div class="desc">display:none vs visibility vs opacity</div></div>
+    </a>
+    <a class="section-card" href="page19.html" data-testid="card-19">
+      <div class="num">19</div><div class="info"><div class="title">Scroll Testing</div><div class="desc">ScrollIntoView, assert on scroll</div></div>
+    </a>
+    <a class="section-card" href="page20.html" data-testid="card-20">
+      <div class="num">20</div><div class="info"><div class="title">Multiple Windows</div><div class="desc">Open new tab, switch window handles</div></div>
+    </a>
+    <a class="section-card" href="page21.html" data-testid="card-21">
+      <div class="num">21</div><div class="info"><div class="title">Auth Simulation</div><div class="desc">Login flow, session, logout</div></div>
+    </a>
+    <a class="section-card" href="page22.html" data-testid="card-22">
+      <div class="num">22</div><div class="info"><div class="title">Stale Element</div><div class="desc">DOM replacement, stale reference</div></div>
+    </a>
+    <a class="section-card" href="page23.html" data-testid="card-23">
+      <div class="num">23</div><div class="info"><div class="title">Dynamic List</div><div class="desc">Add/remove items, assert list length</div></div>
+    </a>
+    <a class="section-card" href="page24.html" data-testid="card-24">
+      <div class="num">24</div><div class="info"><div class="title">Network Delay</div><div class="desc">Wait through simulated API delay</div></div>
+    </a>
+    <a class="section-card" href="page25.html" data-testid="card-25">
+      <div class="num">25</div><div class="info"><div class="title">Flaky Element</div><div class="desc">~50/50 pass/fail, retry logic</div></div>
+    </a>
+    <a class="section-card" href="page26.html" data-testid="card-26">
+      <div class="num">26</div><div class="info"><div class="title">Keyboard Actions</div><div class="desc">sendKeys, shortcuts, arrow keys</div></div>
+    </a>
+    <a class="section-card" href="page27.html" data-testid="card-27">
+      <div class="num">27</div><div class="info"><div class="title">Slider</div><div class="desc">Range slider, live value assertion</div></div>
+    </a>
+    <a class="section-card" href="page28.html" data-testid="card-28">
+      <div class="num">28</div><div class="info"><div class="title">Date Picker</div><div class="desc">Select date, assert echoed value</div></div>
+    </a>
+    <a class="section-card" href="page29.html" data-testid="card-29">
+      <div class="num">29</div><div class="info"><div class="title">Tab Components</div><div class="desc">Switch panels, assert visibility</div></div>
+    </a>
+    <a class="section-card" href="page30.html" data-testid="card-30">
+      <div class="num">30</div><div class="info"><div class="title">Complex DOM</div><div class="desc">XPath axes, CSS combinators, deep nesting</div></div>
+    </a>
+  </div>
+
+  <!-- E-Commerce Project -->
+  <div style="margin-top:2.5rem">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem">
+      <div style="flex:1;height:1px;background:var(--border)"></div>
+      <span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap">🛍️ E-Commerce Practice Project</span>
+      <div style="flex:1;height:1px;background:var(--border)"></div>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">A full end-to-end shopping flow — search, cart, checkout, payment, order history &amp; tracking. Map each page to a Page Object class.</p>
+    <div class="section-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">
+      <a class="section-card" href="ecom-shop.html" data-testid="card-ecom-shop" style="border-color:var(--accent2)">
+        <div class="num" style="background:var(--accent2);color:#111">🏪</div>
+        <div class="info"><div class="title">Shop / Product Search</div><div class="desc">15 products · search · filter · sort · add to cart</div></div>
+      </a>
+      <a class="section-card" href="ecom-cart.html" data-testid="card-ecom-cart" style="border-color:var(--accent2)">
+        <div class="num" style="background:var(--accent2);color:#111">🛒</div>
+        <div class="info"><div class="title">Cart</div><div class="desc">Qty controls · remove · promo code · order summary</div></div>
+      </a>
+      <a class="section-card" href="ecom-checkout.html" data-testid="card-ecom-checkout" style="border-color:var(--accent2)">
+        <div class="num" style="background:var(--accent2);color:#111">💳</div>
+        <div class="info"><div class="title">Checkout &amp; Payment</div><div class="desc">Shipping address · card / PayPal / wallet · validation</div></div>
+      </a>
+      <a class="section-card" href="ecom-confirmation.html" data-testid="card-ecom-confirm" style="border-color:var(--accent2)">
+        <div class="num" style="background:var(--accent2);color:#111">✅</div>
+        <div class="info"><div class="title">Order Confirmation</div><div class="desc">Order ID · items · total · mini tracking bar</div></div>
+      </a>
+      <a class="section-card" href="ecom-orders.html" data-testid="card-ecom-orders" style="border-color:var(--accent2)">
+        <div class="num" style="background:var(--accent2);color:#111">📦</div>
+        <div class="info"><div class="title">Order History &amp; Tracking</div><div class="desc">Filter · sort · timeline tracking · reorder</div></div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── Auth guard ────────────────────────────────────────────────────────
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+const user=sessionStorage.getItem('ap_user')||'admin';
+document.getElementById('header-user').textContent='👤 '+user;
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+</script>
+</body>
+</html>

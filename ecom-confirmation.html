@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Order Confirmed — Automation Practice</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.confirm-wrap{max-width:600px;margin:0 auto;padding:2rem 1.5rem;text-align:center}
+.confirm-icon{font-size:4rem;animation:pop .4s ease}
+@keyframes pop{0%{transform:scale(0)}80%{transform:scale(1.1)}100%{transform:scale(1)}}
+.confirm-card{background:var(--surface);border:1px solid var(--accent2);border-radius:14px;padding:2rem;margin:1.5rem 0}
+.confirm-id{font-size:1.3rem;font-weight:700;color:var(--accent2);letter-spacing:.05em}
+.confirm-meta{font-size:13px;color:var(--muted);margin-top:.5rem}
+.order-item-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border)}
+.order-item-row:last-child{border:none}
+.confirm-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:1.5rem}
+.tracking-mini{display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem;position:relative}
+.tracking-mini::before{content:'';position:absolute;top:50%;left:12px;right:12px;height:2px;background:var(--border);z-index:0;transform:translateY(-50%)}
+.track-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;position:relative;z-index:1;flex-shrink:0}
+.track-dot.done{background:var(--accent2);color:#111}
+.track-dot.active{background:var(--accent);color:#fff;box-shadow:0 0 0 4px rgba(127,140,255,.25)}
+.track-dot.pending{background:var(--surface2);border:2px solid var(--border);color:var(--muted)}
+.ecom-nav{background:var(--surface2);border-bottom:1px solid var(--border);padding:.5rem 2rem;display:flex;gap:6px;flex-wrap:wrap}
+.ecom-nav a{font-size:12px;color:var(--muted);text-decoration:none;padding:4px 12px;border-radius:4px;border:1px solid transparent}
+.ecom-nav a:hover{background:var(--surface);color:var(--text);border-color:var(--border)}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>🛍️ TechMart — Order Confirmed</h1><p>Thank you for your order!</p></div>
+  <div class="badge-row">
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+<div class="ecom-nav">
+  <a href="ecom-shop.html" data-testid="nav-shop">🏪 Shop</a>
+  <a href="ecom-orders.html" data-testid="nav-orders">📦 My Orders</a>
+  <a href="dashboard.html" data-testid="nav-dashboard">← Practice Dashboard</a>
+</div>
+
+<div class="confirm-wrap">
+  <div class="confirm-icon" data-testid="confirm-icon">✅</div>
+  <h2 style="font-size:1.4rem;font-weight:700;margin:.5rem 0" data-testid="confirm-heading">Order Placed Successfully!</h2>
+  <p style="font-size:13px;color:var(--muted)">A confirmation has been sent to your email.</p>
+
+  <div class="confirm-card" data-testid="confirm-card">
+    <div class="confirm-id" data-testid="order-id" id="confirm-order-id">ORD-XXXXXX</div>
+    <div class="confirm-meta" id="confirm-date" data-testid="confirm-date"></div>
+    <div style="margin-top:1.5rem;text-align:left">
+      <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem">Items Ordered</div>
+      <div id="confirm-items" data-testid="confirm-items"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:1rem;padding-top:.75rem;border-top:1px solid var(--border)">
+      <span style="font-size:13px;color:var(--muted)">Order Total</span>
+      <span style="font-size:14px;font-weight:700;color:var(--accent2)" id="confirm-total" data-testid="confirm-total"></span>
+    </div>
+
+    <!-- Mini tracking bar -->
+    <div style="margin-top:1.5rem;text-align:left">
+      <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.75rem">Order Status</div>
+      <div class="tracking-mini" data-testid="tracking-mini">
+        <div class="track-dot done" data-testid="track-placed" title="Order Placed">📋</div>
+        <div class="track-dot active" data-testid="track-payment" title="Payment">💳</div>
+        <div class="track-dot pending" data-testid="track-dispatch" title="Dispatched">📦</div>
+        <div class="track-dot pending" data-testid="track-delivery" title="Out for Delivery">🚚</div>
+        <div class="track-dot pending" data-testid="track-delivered" title="Delivered">🏠</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:6px;padding:0 4px">
+        <span>Placed</span><span>Payment</span><span>Dispatched</span><span>Delivery</span><span>Done</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="confirm-actions">
+    <a href="ecom-orders.html" class="btn btn-primary" data-testid="btn-view-orders">📦 View My Orders</a>
+    <a href="ecom-shop.html" class="btn btn-ghost" data-testid="btn-continue-shopping">🏪 Continue Shopping</a>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+document.getElementById('header-user').textContent='👤 '+(sessionStorage.getItem('ap_user')||'admin');
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+
+const lastId=sessionStorage.getItem('ap_last_order');
+const orders=JSON.parse(localStorage.getItem('ap_orders_'+(sessionStorage.getItem('ap_user')||'admin'))||'[]');
+const order=orders.find(o=>o.id===lastId)||orders[0];
+
+if(order){
+  document.getElementById('confirm-order-id').textContent=order.id;
+  document.getElementById('confirm-date').textContent='Placed on '+new Date(order.date).toLocaleString();
+  document.getElementById('confirm-total').textContent='$'+order.total;
+  document.getElementById('confirm-items').innerHTML=order.items.map(i=>`
+    <div class="order-item-row" data-testid="confirm-item-${i.id}">
+      <span>${i.emoji} ${i.name} × ${i.qty}</span>
+      <span style="color:var(--accent2)">$${(i.price*i.qty).toFixed(2)}</span>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>

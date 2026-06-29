@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Dynamic List — Automation Practice</title>
+<link rel="stylesheet" href="shared.css"/>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🎭 Automation Practice</h1>
+    <p>Section 23 of 30 · JavaScript / TypeScript</p>
+  </div>
+  <div class="badge-row">
+    <span class="badge">Playwright</span>
+    <span class="badge">Selenium</span>
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" data-testid="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+<div class="page-nav">
+  <a class="home-link" href="dashboard.html">🏠 Dashboard</a>
+  <span style="color:var(--border)">›</span>
+  <span style="font-size:12px;color:var(--text)">Section 23</span>
+  <div class="prev-next"><a href="page22.html">← 22</a><a href="page24.html">24 →</a></div>
+</div>
+<div class="container">
+<div class="section" id="s23">
+  <div class="section-header">
+    <div class="section-num">23</div>
+    <div><div class="section-title">Dynamic List</div>
+    <div class="section-desc">Add and remove items — assert on changing list length</div></div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:8px">
+    <input id="list-input" type="text" data-testid="list-input" placeholder="New item..." style="flex:1"/>
+    <button class="btn btn-success btn-sm" data-testid="btn-add-item" onclick="addListItem()">Add</button>
+  </div>
+  <ul id="dynamic-list" data-testid="dynamic-list" style="list-style:none;display:flex;flex-direction:column;gap:6px"></ul>
+  <div id="list-count" data-testid="list-count" class="result" style="margin-top:8px">0 items</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+document.getElementById('header-user').textContent='👤 '+(sessionStorage.getItem('ap_user')||'admin');
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+function setResult(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block'}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+let listItems=['First item','Second item'];
+function renderList(){
+  const ul=document.getElementById('dynamic-list');
+  ul.innerHTML=listItems.map((item,i)=>`
+    <li data-testid="list-item-${i}" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px">
+      <span>${item}</span>
+      <button class="btn btn-danger btn-sm" data-testid="btn-remove-${i}" onclick="removeItem(${i})">Remove</button>
+    </li>`).join('');
+  setResult('list-count',listItems.length+' item(s)');
+}
+function addListItem(){const v=document.getElementById('list-input').value.trim();if(v){listItems.push(v);document.getElementById('list-input').value='';renderList()}}
+function removeItem(i){listItems.splice(i,1);renderList()}
+renderList();
+</script>
+</body>
+</html>

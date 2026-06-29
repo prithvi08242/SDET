@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>My Orders — Automation Practice</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.orders-list{display:flex;flex-direction:column;gap:14px}
+.order-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.order-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--border)}
+.order-id{font-size:13px;font-weight:700;color:var(--accent)}
+.order-date{font-size:12px;color:var(--muted)}
+.order-total{font-size:13px;font-weight:700;color:var(--accent2)}
+.status-pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.status-Processing{background:#ffb34722;color:var(--warn);border:1px solid var(--warn)}
+.status-Dispatched{background:#7f8cff22;color:var(--accent);border:1px solid var(--accent)}
+.status-Delivered{background:#5dcaa522;color:var(--accent2);border:1px solid var(--accent2)}
+.order-body{padding:1rem 1.2rem}
+.order-items-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.75rem}
+.order-item-chip{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:12px;color:var(--muted)}
+
+/* Tracking timeline */
+.tracking-timeline{position:relative;padding-left:28px;margin-top:.5rem}
+.tracking-timeline::before{content:'';position:absolute;left:9px;top:0;bottom:0;width:2px;background:var(--border)}
+.track-event{position:relative;padding:.5rem 0 .5rem .75rem;font-size:13px}
+.track-event::before{content:'';position:absolute;left:-24px;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:50%;background:var(--border);border:2px solid var(--bg)}
+.track-event.done::before{background:var(--accent2)}
+.track-event.active::before{background:var(--accent);box-shadow:0 0 0 3px rgba(127,140,255,.25)}
+.track-event .ev-status{font-weight:600;color:var(--text)}
+.track-event.pending .ev-status{color:var(--muted)}
+.track-event .ev-time{font-size:11px;color:var(--muted);margin-top:1px}
+.tracking-panel{display:none;padding:1rem 1.2rem;border-top:1px solid var(--border);background:var(--surface2)}
+.tracking-panel.open{display:block}
+.filter-bar{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap}
+.filter-bar select{width:auto}
+.empty-orders{text-align:center;padding:4rem;color:var(--muted)}
+.ecom-nav{background:var(--surface2);border-bottom:1px solid var(--border);padding:.5rem 2rem;display:flex;gap:6px;flex-wrap:wrap}
+.ecom-nav a{font-size:12px;color:var(--muted);text-decoration:none;padding:4px 12px;border-radius:4px;border:1px solid transparent}
+.ecom-nav a:hover,.ecom-nav a.active{background:var(--surface);color:var(--text);border-color:var(--border)}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>🛍️ TechMart — My Orders</h1><p>Order History &amp; Tracking · Automation Practice</p></div>
+  <div class="badge-row">
+    <a href="ecom-shop.html" class="badge" style="text-decoration:none;cursor:pointer">🏪 Shop</a>
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+<div class="ecom-nav">
+  <a href="ecom-shop.html" data-testid="nav-shop">🏪 Shop</a>
+  <a href="ecom-cart.html" data-testid="nav-cart">🛒 Cart</a>
+  <a href="ecom-orders.html" class="active" data-testid="nav-orders">📦 My Orders</a>
+  <a href="dashboard.html" data-testid="nav-dashboard">← Practice Dashboard</a>
+</div>
+
+<div class="container">
+  <div class="filter-bar">
+    <select id="filter-status" data-testid="filter-status" aria-label="Filter by status" onchange="renderOrders()">
+      <option value="">All Orders</option>
+      <option value="Processing">Processing</option>
+      <option value="Dispatched">Dispatched</option>
+      <option value="Delivered">Delivered</option>
+    </select>
+    <select id="sort-orders" data-testid="sort-orders" aria-label="Sort orders" onchange="renderOrders()">
+      <option value="newest">Newest First</option>
+      <option value="oldest">Oldest First</option>
+      <option value="total-high">Total: High → Low</option>
+      <option value="total-low">Total: Low → High</option>
+    </select>
+    <button class="btn btn-ghost btn-sm" data-testid="btn-seed-orders" onclick="seedOrders()">+ Seed Demo Orders</button>
+  </div>
+
+  <div id="empty-orders" class="empty-orders" style="display:none" data-testid="empty-orders">
+    <div style="font-size:3rem">📦</div>
+    <div style="font-size:16px;font-weight:600;margin:.5rem 0">No orders yet</div>
+    <p style="font-size:13px;margin-bottom:1rem">Click "Seed Demo Orders" above or place an order in the shop.</p>
+    <a href="ecom-shop.html" class="btn btn-primary" style="text-decoration:none">Start Shopping</a>
+  </div>
+
+  <div id="orders-list" class="orders-list" data-testid="orders-list"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+const USER=sessionStorage.getItem('ap_user')||'admin';
+document.getElementById('header-user').textContent='👤 '+USER;
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+
+function getOrders(){return JSON.parse(localStorage.getItem('ap_orders_'+USER)||'[]')}
+function saveOrders(o){localStorage.setItem('ap_orders_'+USER,JSON.stringify(o))}
+
+function seedOrders(){
+  const seed=[
+    {id:'ORD-DEMO01',date:new Date(Date.now()-8*864e5).toISOString(),
+     items:[{id:'p7',name:'SoundWave Pro',emoji:'🎧',cat:'Audio',price:349,qty:1},{id:'p11',name:'TrackMaster Pro',emoji:'🖱️',cat:'Accessory',price:79,qty:2}],
+     total:'542.34',payMethod:'card',status:'Delivered',
+     shipping:{fname:'Jane',lname:'Doe',addr:'123 Main St',city:'New York',zip:'10001'},
+     tracking:[
+       {status:'Order Placed',time:new Date(Date.now()-8*864e5).toISOString(),done:true},
+       {status:'Payment Confirmed',time:new Date(Date.now()-8*864e5+3e5).toISOString(),done:true},
+       {status:'Dispatched',time:new Date(Date.now()-6*864e5).toISOString(),done:true},
+       {status:'Out for Delivery',time:new Date(Date.now()-1*864e5).toISOString(),done:true},
+       {status:'Delivered',time:new Date(Date.now()-864e5+7.2e6).toISOString(),done:true},
+     ]},
+    {id:'ORD-DEMO02',date:new Date(Date.now()-3*864e5).toISOString(),
+     items:[{id:'p1',name:'ProBook Ultra 15',emoji:'💻',cat:'Laptop',price:1299,qty:1}],
+     total:'1423.57',payMethod:'paypal',status:'Dispatched',
+     shipping:{fname:'Jane',lname:'Doe',addr:'123 Main St',city:'New York',zip:'10001'},
+     tracking:[
+       {status:'Order Placed',time:new Date(Date.now()-3*864e5).toISOString(),done:true},
+       {status:'Payment Confirmed',time:new Date(Date.now()-3*864e5+6e5).toISOString(),done:true},
+       {status:'Dispatched',time:new Date(Date.now()-1*864e5).toISOString(),done:true},
+       {status:'Out for Delivery',time:null,done:false},
+       {status:'Delivered',time:null,done:false},
+     ]},
+    {id:'ORD-DEMO03',date:new Date(Date.now()-1*864e5).toISOString(),
+     items:[{id:'p4',name:'Galaxy X20',emoji:'📱',cat:'Phone',price:899,qty:1},{id:'p8',name:'BudsX Elite',emoji:'🎵',cat:'Audio',price:149,qty:1}],
+     total:'1138.25',payMethod:'card',status:'Processing',
+     shipping:{fname:'Jane',lname:'Doe',addr:'123 Main St',city:'New York',zip:'10001'},
+     tracking:[
+       {status:'Order Placed',time:new Date(Date.now()-864e5).toISOString(),done:true},
+       {status:'Payment Confirmed',time:null,done:false},
+       {status:'Dispatched',time:null,done:false},
+       {status:'Out for Delivery',time:null,done:false},
+       {status:'Delivered',time:null,done:false},
+     ]},
+  ];
+  const existing=getOrders();
+  const ids=existing.map(o=>o.id);
+  const toAdd=seed.filter(o=>!ids.includes(o.id));
+  saveOrders([...toAdd,...existing]);
+  showToast('✅ Demo orders seeded!');
+  renderOrders();
+}
+
+function toggleTracking(id){
+  const panel=document.getElementById('tracking-'+id);
+  panel.classList.toggle('open');
+  const btn=document.getElementById('track-btn-'+id);
+  btn.textContent=panel.classList.contains('open')?'▲ Hide Tracking':'▼ Track Order';
+}
+
+function renderOrders(){
+  const filterStatus=document.getElementById('filter-status').value;
+  const sortBy=document.getElementById('sort-orders').value;
+  let orders=getOrders();
+
+  if(filterStatus) orders=orders.filter(o=>o.status===filterStatus);
+  if(sortBy==='oldest') orders=[...orders].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  else if(sortBy==='total-high') orders=[...orders].sort((a,b)=>parseFloat(b.total)-parseFloat(a.total));
+  else if(sortBy==='total-low') orders=[...orders].sort((a,b)=>parseFloat(a.total)-parseFloat(b.total));
+
+  const list=document.getElementById('orders-list');
+  const empty=document.getElementById('empty-orders');
+
+  if(!orders.length){list.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+
+  list.innerHTML=orders.map(o=>{
+    const trackHTML=o.tracking.map((t,i)=>{
+      const isDone=t.done;
+      const isActive=!isDone&&(i===0||(i>0&&o.tracking[i-1].done));
+      const cls=isDone?'done':isActive?'active':'pending';
+      return `<div class="track-event ${cls}" data-testid="track-event-${o.id}-${i}">
+        <div class="ev-status">${t.status}</div>
+        <div class="ev-time">${t.time?new Date(t.time).toLocaleString():'Pending'}</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="order-card" data-testid="order-card-${o.id}">
+      <div class="order-header">
+        <div>
+          <div class="order-id" data-testid="order-id-${o.id}">${o.id}</div>
+          <div class="order-date" data-testid="order-date-${o.id}">${new Date(o.date).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span class="status-pill status-${o.status}" data-testid="order-status-${o.id}">${o.status}</span>
+          <span class="order-total" data-testid="order-total-${o.id}">$${o.total}</span>
+        </div>
+      </div>
+      <div class="order-body">
+        <div class="order-items-row" data-testid="order-items-${o.id}">
+          ${o.items.map(i=>`<div class="order-item-chip" data-testid="order-chip-${o.id}-${i.id}">${i.emoji} ${i.name} ×${i.qty}</div>`).join('')}
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" id="track-btn-${o.id}" data-testid="btn-track-${o.id}" onclick="toggleTracking('${o.id}')">▼ Track Order</button>
+          <button class="btn btn-ghost btn-sm" data-testid="btn-reorder-${o.id}" onclick="reorder('${o.id}')">🔁 Reorder</button>
+          ${o.status==='Delivered'?`<button class="btn btn-ghost btn-sm" data-testid="btn-review-${o.id}" onclick="showToast('Review submitted for ${o.id}!')">⭐ Leave Review</button>`:''}
+        </div>
+      </div>
+      <div class="tracking-panel" id="tracking-${o.id}" data-testid="tracking-panel-${o.id}">
+        <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.75rem">
+          📍 Shipment Tracking — ${o.id}
+        </div>
+        <div class="tracking-timeline" data-testid="tracking-timeline-${o.id}">${trackHTML}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function reorder(id){
+  const o=getOrders().find(x=>x.id===id);
+  if(!o)return;
+  const cart=JSON.parse(sessionStorage.getItem('ap_cart')||'[]');
+  o.items.forEach(item=>{
+    const ex=cart.find(c=>c.id===item.id);
+    if(ex)ex.qty+=item.qty;
+    else cart.push({...item});
+  });
+  sessionStorage.setItem('ap_cart',JSON.stringify(cart));
+  showToast('✅ Items added to cart!');
+  setTimeout(()=>window.location.href='ecom-cart.html',1200);
+}
+
+renderOrders();
+</script>
+</body>
+</html>

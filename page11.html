@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>iFrame — Automation Practice</title>
+<link rel="stylesheet" href="shared.css"/>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🎭 Automation Practice</h1>
+    <p>Section 11 of 30 · JavaScript / TypeScript</p>
+  </div>
+  <div class="badge-row">
+    <span class="badge">Playwright</span>
+    <span class="badge">Selenium</span>
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" data-testid="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+<div class="page-nav">
+  <a class="home-link" href="dashboard.html">🏠 Dashboard</a>
+  <span style="color:var(--border)">›</span>
+  <span style="font-size:12px;color:var(--text)">Section 11</span>
+  <div class="prev-next"><a href="page10.html">← 10</a><a href="page12.html">12 →</a></div>
+</div>
+<div class="container">
+<div class="section" id="s11">
+  <div class="section-header">
+    <div class="section-num">11</div>
+    <div><div class="section-title">iFrame</div>
+    <div class="section-desc">Switch into iframe context before interacting with elements inside</div></div>
+  </div>
+  <iframe id="practice-iframe" name="practice-iframe" data-testid="practice-iframe" class="practice-frame"
+    srcdoc="<html><body style='font-family:sans-serif;background:#1a1d27;color:#e8eaf6;padding:16px'>
+    <h4 style='margin-bottom:12px;font-size:14px'>You are inside an iFrame</h4>
+    <label style='font-size:12px;display:block;margin-bottom:4px'>iFrame Input</label>
+    <input id='iframe-input' type='text' placeholder='Type inside iframe...' data-testid='iframe-input'
+      style='width:100%;padding:8px;background:#22263a;border:1px solid #2e3250;border-radius:6px;color:#e8eaf6;font-size:13px'/>
+    <button onclick=&quot;document.getElementById(&apos;iframe-result&apos;).textContent=&apos;Clicked inside iFrame!&apos;&quot;
+      style='margin-top:8px;padding:6px 14px;background:#7f8cff;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px'>
+      Click inside iFrame</button>
+    <div id='iframe-result' style='margin-top:8px;padding:8px;background:#22263a;border-radius:6px;font-size:13px'></div>
+    </body></html>"></iframe>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+document.getElementById('header-user').textContent='👤 '+(sessionStorage.getItem('ap_user')||'admin');
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+function setResult(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block'}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+
+</script>
+</body>
+</html>

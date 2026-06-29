@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Checkout — Automation Practice</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.checkout-layout{display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start}
+@media(max-width:700px){.checkout-layout{grid-template-columns:1fr}}
+.checkout-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem}
+.checkout-section h3{font-size:13px;font-weight:700;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);color:var(--accent)}
+.step-indicator{display:flex;gap:0;margin-bottom:1.5rem}
+.step{flex:1;text-align:center;padding:.6rem;font-size:12px;font-weight:600;background:var(--surface2);color:var(--muted);border:1px solid var(--border);position:relative}
+.step:first-child{border-radius:6px 0 0 6px}
+.step:last-child{border-radius:0 6px 6px 0}
+.step.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.step.done{background:var(--accent2);color:#111;border-color:var(--accent2)}
+.card-row{display:flex;gap:10px}
+.card-icons{display:flex;gap:6px;margin-top:6px}
+.card-icon{padding:3px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;font-size:12px}
+.mini-cart-item{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border);color:var(--muted)}
+.mini-cart-item:last-child{border:none}
+.summary-total-row{display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--accent2);padding:8px 0;border-top:1px solid var(--border);margin-top:4px}
+.ecom-nav{background:var(--surface2);border-bottom:1px solid var(--border);padding:.5rem 2rem;display:flex;gap:6px;flex-wrap:wrap}
+.ecom-nav a{font-size:12px;color:var(--muted);text-decoration:none;padding:4px 12px;border-radius:4px;border:1px solid transparent}
+.ecom-nav a:hover{background:var(--surface);color:var(--text);border-color:var(--border)}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>🛍️ TechMart — Checkout</h1><p>Secure Payment · Automation Practice</p></div>
+  <div class="badge-row">
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+<div class="ecom-nav">
+  <a href="ecom-shop.html" data-testid="nav-shop">🏪 Shop</a>
+  <a href="ecom-cart.html" data-testid="nav-cart">🛒 Cart</a>
+  <a href="ecom-orders.html" data-testid="nav-orders">📦 My Orders</a>
+  <a href="dashboard.html" data-testid="nav-dashboard">← Practice Dashboard</a>
+</div>
+
+<div class="container">
+  <!-- Step indicator -->
+  <div class="step-indicator" data-testid="step-indicator">
+    <div class="step done" data-testid="step-cart">Cart</div>
+    <div class="step active" data-testid="step-shipping">Shipping</div>
+    <div class="step" data-testid="step-payment">Payment</div>
+    <div class="step" data-testid="step-confirm">Confirm</div>
+  </div>
+
+  <div class="checkout-layout">
+    <div>
+      <!-- Shipping -->
+      <div class="checkout-section" id="section-shipping">
+        <h3>📦 Shipping Address</h3>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="lbl">First Name</label>
+            <input id="ship-fname" type="text" data-testid="ship-fname" aria-label="First name" placeholder="Jane"/>
+          </div>
+          <div class="form-group">
+            <label class="lbl">Last Name</label>
+            <input id="ship-lname" type="text" data-testid="ship-lname" aria-label="Last name" placeholder="Doe"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="lbl">Address Line 1</label>
+          <input id="ship-addr1" type="text" data-testid="ship-addr1" aria-label="Address 1" placeholder="123 Main Street"/>
+        </div>
+        <div class="form-group">
+          <label class="lbl">Address Line 2 (optional)</label>
+          <input id="ship-addr2" type="text" data-testid="ship-addr2" aria-label="Address 2" placeholder="Apt, Suite, etc."/>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="lbl">City</label>
+            <input id="ship-city" type="text" data-testid="ship-city" aria-label="City" placeholder="New York"/>
+          </div>
+          <div class="form-group">
+            <label class="lbl">ZIP Code</label>
+            <input id="ship-zip" type="text" data-testid="ship-zip" aria-label="ZIP" placeholder="10001"/>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="lbl">State</label>
+            <select id="ship-state" data-testid="ship-state" aria-label="State">
+              <option value="">-- Select State --</option>
+              <option>Alabama</option><option>Alaska</option><option>Arizona</option>
+              <option>California</option><option>Colorado</option><option>Florida</option>
+              <option>Georgia</option><option>Illinois</option><option>New York</option>
+              <option>Texas</option><option>Washington</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="lbl">Country</label>
+            <select id="ship-country" data-testid="ship-country" aria-label="Country">
+              <option value="US">United States</option>
+              <option value="CA">Canada</option>
+              <option value="UK">United Kingdom</option>
+              <option value="AU">Australia</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="lbl">Shipping Method</label>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px">
+              <input type="radio" name="shipping-method" value="standard" data-testid="ship-standard" checked style="accent-color:var(--accent)"/>
+              Standard (5-7 days) — FREE
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px">
+              <input type="radio" name="shipping-method" value="express" data-testid="ship-express" style="accent-color:var(--accent)"/>
+              Express (2-3 days) — $19.99
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px">
+              <input type="radio" name="shipping-method" value="overnight" data-testid="ship-overnight" style="accent-color:var(--accent)"/>
+              Overnight (Next day) — $39.99
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment -->
+      <div class="checkout-section" id="section-payment">
+        <h3>💳 Payment Details</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1rem">
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+            <input type="radio" name="pay-method" value="card" data-testid="pay-card" checked style="accent-color:var(--accent)" onchange="togglePayMethod()"/>
+            Credit / Debit Card
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+            <input type="radio" name="pay-method" value="paypal" data-testid="pay-paypal" style="accent-color:var(--accent)" onchange="togglePayMethod()"/>
+            PayPal
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+            <input type="radio" name="pay-method" value="wallet" data-testid="pay-wallet" style="accent-color:var(--accent)" onchange="togglePayMethod()"/>
+            Digital Wallet (Apple Pay / Google Pay)
+          </label>
+        </div>
+
+        <div id="card-fields">
+          <div class="form-group">
+            <label class="lbl">Name on Card</label>
+            <input id="card-name" type="text" data-testid="card-name" aria-label="Card name" placeholder="Jane Doe"/>
+          </div>
+          <div class="form-group">
+            <label class="lbl">Card Number</label>
+            <input id="card-number" type="text" data-testid="card-number" aria-label="Card number"
+              placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)"/>
+            <div class="card-icons">
+              <span class="card-icon">VISA</span>
+              <span class="card-icon">MC</span>
+              <span class="card-icon">AMEX</span>
+            </div>
+          </div>
+          <div class="card-row">
+            <div class="form-group" style="flex:1">
+              <label class="lbl">Expiry Date</label>
+              <input id="card-expiry" type="text" data-testid="card-expiry" aria-label="Expiry" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this)"/>
+            </div>
+            <div class="form-group" style="flex:1">
+              <label class="lbl">CVV</label>
+              <input id="card-cvv" type="password" data-testid="card-cvv" aria-label="CVV" placeholder="•••" maxlength="4"/>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px">
+            <input id="save-card" type="checkbox" data-testid="save-card" style="accent-color:var(--accent)"/>
+            <label for="save-card" style="cursor:pointer;color:var(--muted)">Save card for future purchases</label>
+          </div>
+        </div>
+
+        <div id="paypal-fields" style="display:none;padding:1rem;background:var(--surface2);border-radius:6px;text-align:center;font-size:13px;color:var(--muted)">
+          🔵 You will be redirected to PayPal to complete payment.
+        </div>
+        <div id="wallet-fields" style="display:none;padding:1rem;background:var(--surface2);border-radius:6px;text-align:center;font-size:13px;color:var(--muted)">
+          📱 Tap your device or use Face ID to pay with your digital wallet.
+        </div>
+      </div>
+
+      <div id="checkout-error" style="display:none;background:#ff5c5c22;border:1px solid var(--danger);color:var(--danger);border-radius:6px;padding:10px 14px;font-size:13px;margin-bottom:1rem"></div>
+
+      <button class="btn btn-primary" style="width:100%;padding:12px" data-testid="btn-place-order" onclick="placeOrder()">
+        🔒 Place Order
+      </button>
+    </div>
+
+    <!-- Order summary sidebar -->
+    <div>
+      <div class="checkout-section">
+        <h3>🧾 Order Summary</h3>
+        <div id="checkout-items" data-testid="checkout-items"></div>
+        <div class="summary-total-row">
+          <span>Total</span>
+          <span id="checkout-total" data-testid="checkout-total">$0.00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+document.getElementById('header-user').textContent='👤 '+(sessionStorage.getItem('ap_user')||'admin');
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+
+function getCart(){return JSON.parse(sessionStorage.getItem('ap_cart')||'[]')}
+
+// Render sidebar cart
+const cart=getCart();
+if(!cart.length){window.location.href='ecom-cart.html';}
+document.getElementById('checkout-items').innerHTML=cart.map(i=>`
+  <div class="mini-cart-item" data-testid="checkout-item-${i.id}">
+    <span>${i.emoji} ${i.name} × ${i.qty}</span>
+    <span>$${(i.price*i.qty).toFixed(2)}</span>
+  </div>`).join('');
+document.getElementById('checkout-total').textContent='$'+(sessionStorage.getItem('ap_order_total')||'0.00');
+
+function togglePayMethod(){
+  const v=document.querySelector('input[name="pay-method"]:checked').value;
+  document.getElementById('card-fields').style.display=v==='card'?'block':'none';
+  document.getElementById('paypal-fields').style.display=v==='paypal'?'block':'none';
+  document.getElementById('wallet-fields').style.display=v==='wallet'?'block':'none';
+}
+function formatCard(el){
+  let v=el.value.replace(/\D/g,'').substring(0,16);
+  el.value=v.replace(/(.{4})/g,'$1 ').trim();
+}
+function formatExpiry(el){
+  let v=el.value.replace(/\D/g,'').substring(0,4);
+  if(v.length>=2)v=v.substring(0,2)+'/'+v.substring(2);
+  el.value=v;
+}
+
+function placeOrder(){
+  const err=document.getElementById('checkout-error');
+  err.style.display='none';
+  const fname=document.getElementById('ship-fname').value.trim();
+  const lname=document.getElementById('ship-lname').value.trim();
+  const addr=document.getElementById('ship-addr1').value.trim();
+  const city=document.getElementById('ship-city').value.trim();
+  const zip=document.getElementById('ship-zip').value.trim();
+  const payMethod=document.querySelector('input[name="pay-method"]:checked').value;
+
+  if(!fname||!lname||!addr||!city||!zip){
+    err.textContent='❌ Please fill in all required shipping fields.';err.style.display='block';return;
+  }
+  if(payMethod==='card'){
+    const cn=document.getElementById('card-number').value.replace(/\s/g,'');
+    const exp=document.getElementById('card-expiry').value;
+    const cvv=document.getElementById('card-cvv').value;
+    if(cn.length<16||!exp||cvv.length<3){
+      err.textContent='❌ Please enter valid card details.';err.style.display='block';return;
+    }
+  }
+
+  // Build order
+  const orderId='ORD-'+Math.random().toString(36).substring(2,8).toUpperCase();
+  const order={
+    id:orderId,
+    date:new Date().toISOString(),
+    items:getCart(),
+    total:sessionStorage.getItem('ap_order_total')||'0.00',
+    shipping:{fname,lname,addr,city,zip},
+    payMethod,
+    status:'Processing',
+    tracking:[
+      {status:'Order Placed',time:new Date().toISOString(),done:true},
+      {status:'Payment Confirmed',time:new Date(Date.now()+60000).toISOString(),done:false},
+      {status:'Dispatched',time:null,done:false},
+      {status:'Out for Delivery',time:null,done:false},
+      {status:'Delivered',time:null,done:false},
+    ]
+  };
+
+  // Save order
+  const orders=JSON.parse(localStorage.getItem('ap_orders_'+(sessionStorage.getItem('ap_user')||'admin'))||'[]');
+  orders.unshift(order);
+  localStorage.setItem('ap_orders_'+(sessionStorage.getItem('ap_user')||'admin'),JSON.stringify(orders));
+  sessionStorage.setItem('ap_cart','[]');
+  sessionStorage.setItem('ap_last_order',orderId);
+  window.location.href='ecom-confirmation.html';
+}
+</script>
+</body>
+</html>

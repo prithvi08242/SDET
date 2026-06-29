@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Date Picker — Automation Practice</title>
+<link rel="stylesheet" href="shared.css"/>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🎭 Automation Practice</h1>
+    <p>Section 28 of 30 · JavaScript / TypeScript</p>
+  </div>
+  <div class="badge-row">
+    <span class="badge">Playwright</span>
+    <span class="badge">Selenium</span>
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" data-testid="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+<div class="page-nav">
+  <a class="home-link" href="dashboard.html">🏠 Dashboard</a>
+  <span style="color:var(--border)">›</span>
+  <span style="font-size:12px;color:var(--text)">Section 28</span>
+  <div class="prev-next"><a href="page27.html">← 27</a><a href="page29.html">29 →</a></div>
+</div>
+<div class="container">
+<div class="section" id="s28">
+  <div class="section-header">
+    <div class="section-num">28</div>
+    <div><div class="section-title">Date Picker</div>
+    <div class="section-desc">Select a date and assert the echoed value</div></div>
+  </div>
+  <input id="date-picker" type="date" data-testid="date-picker" aria-label="Date picker"
+    onchange="setResult('date-result','Chosen date: '+this.value)"/>
+  <div id="date-result" data-testid="date-result" class="result" style="margin-top:8px">Chosen date: none</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+document.getElementById('header-user').textContent='👤 '+(sessionStorage.getItem('ap_user')||'admin');
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+function setResult(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block'}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+
+</script>
+</body>
+</html>

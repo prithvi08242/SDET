@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Authentication Simulation — Automation Practice</title>
+<link rel="stylesheet" href="shared.css"/>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🎭 Automation Practice</h1>
+    <p>Section 21 of 30 · JavaScript / TypeScript</p>
+  </div>
+  <div class="badge-row">
+    <span class="badge">Playwright</span>
+    <span class="badge">Selenium</span>
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" data-testid="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+<div class="page-nav">
+  <a class="home-link" href="dashboard.html">🏠 Dashboard</a>
+  <span style="color:var(--border)">›</span>
+  <span style="font-size:12px;color:var(--text)">Section 21</span>
+  <div class="prev-next"><a href="page20.html">← 20</a><a href="page22.html">22 →</a></div>
+</div>
+<div class="container">
+<div class="section" id="s21">
+  <div class="section-header">
+    <div class="section-num">21</div>
+    <div><div class="section-title">Authentication Simulation</div>
+    <div class="section-desc">Login flow — username: admin  password: admin123</div></div>
+  </div>
+  <div id="login-form-area">
+    <div class="form-group"><label class="lbl">Username</label>
+      <input id="auth-username" type="text" data-testid="auth-username" placeholder="admin"/>
+    </div>
+    <div class="form-group"><label class="lbl">Password</label>
+      <input id="auth-password" type="password" data-testid="auth-password" placeholder="admin123"/>
+    </div>
+    <button class="btn btn-primary" data-testid="btn-login" onclick="doMockLogin()">Login</button>
+  </div>
+  <div id="auth-result" data-testid="auth-result" class="result" style="margin-top:8px">Not logged in</div>
+  <button id="btn-logout-mock" data-testid="btn-logout-mock" class="btn btn-ghost btn-sm" style="display:none;margin-top:8px" onclick="doMockLogout()">Logout</button>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+document.getElementById('header-user').textContent='👤 '+(sessionStorage.getItem('ap_user')||'admin');
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+function setResult(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block'}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function doMockLogin(){
+  const u=document.getElementById('auth-username').value;
+  const p=document.getElementById('auth-password').value;
+  if(u==='admin'&&p==='admin123'){
+    setResult('auth-result','✅ Logged in as: '+u);
+    document.getElementById('btn-logout-mock').style.display='inline-flex';
+  } else {
+    setResult('auth-result','❌ Invalid credentials. Try admin / admin123');
+  }
+}
+function doMockLogout(){setResult('auth-result','Logged out');document.getElementById('btn-logout-mock').style.display='none';document.getElementById('auth-username').value='';document.getElementById('auth-password').value=''}
+</script>
+</body>
+</html>

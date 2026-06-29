@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Network Delay Simulation — Automation Practice</title>
+<link rel="stylesheet" href="shared.css"/>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🎭 Automation Practice</h1>
+    <p>Section 24 of 30 · JavaScript / TypeScript</p>
+  </div>
+  <div class="badge-row">
+    <span class="badge">Playwright</span>
+    <span class="badge">Selenium</span>
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" data-testid="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+<div class="page-nav">
+  <a class="home-link" href="dashboard.html">🏠 Dashboard</a>
+  <span style="color:var(--border)">›</span>
+  <span style="font-size:12px;color:var(--text)">Section 24</span>
+  <div class="prev-next"><a href="page23.html">← 23</a><a href="page25.html">25 →</a></div>
+</div>
+<div class="container">
+<div class="section" id="s24">
+  <div class="section-header">
+    <div class="section-num">24</div>
+    <div><div class="section-title">Network Delay Simulation</div>
+    <div class="section-desc">Wait through simulated 2s network delay before response appears</div></div>
+  </div>
+  <button class="btn btn-primary btn-sm" data-testid="btn-fetch-delay" onclick="fetchWithDelay()">Fetch with 2s Delay</button>
+  <div id="delay-result" data-testid="delay-result" class="result" style="margin-top:8px">Idle — click to fetch</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+document.getElementById('header-user').textContent='👤 '+(sessionStorage.getItem('ap_user')||'admin');
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+function setResult(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block'}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function fetchWithDelay(){
+  setResult('delay-result','⏳ Fetching...');
+  setTimeout(()=>setResult('delay-result','✅ Response: {"employees":9,"status":"ok"}'),2000);
+}
+</script>
+</body>
+</html>

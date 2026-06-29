@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Waits & Synchronisation — Automation Practice</title>
+<link rel="stylesheet" href="shared.css"/>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🎭 Automation Practice</h1>
+    <p>Section 07 of 30 · JavaScript / TypeScript</p>
+  </div>
+  <div class="badge-row">
+    <span class="badge">Playwright</span>
+    <span class="badge">Selenium</span>
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" data-testid="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+<div class="page-nav">
+  <a class="home-link" href="dashboard.html">🏠 Dashboard</a>
+  <span style="color:var(--border)">›</span>
+  <span style="font-size:12px;color:var(--text)">Section 07</span>
+  <div class="prev-next"><a href="page06.html">← 06</a><a href="page08.html">08 →</a></div>
+</div>
+<div class="container">
+<div class="section" id="s7">
+  <div class="section-header">
+    <div class="section-num">07</div>
+    <div><div class="section-title">Waits & Synchronisation</div>
+    <div class="section-desc">Spinner, delayed text, progress bar, AJAX simulation</div></div>
+  </div>
+  <div class="grid-2">
+    <div>
+      <button class="btn btn-primary btn-sm" onclick="startSpinner()">Start Spinner</button>
+      <div id="spinner-el" data-testid="spinner-el" style="margin-top:8px;display:none" class="result">⏳ Loading...</div>
+      <div id="spinner-done" data-testid="spinner-done" style="margin-top:8px;display:none" class="result">✅ Loaded!</div>
+    </div>
+    <div>
+      <button class="btn btn-ghost btn-sm" onclick="startProgress()">Start Progress</button>
+      <div class="progress-bar-wrap" style="margin-top:8px">
+        <div id="progress-fill" data-testid="progress-fill" class="progress-bar-fill"></div>
+      </div>
+      <div id="progress-text" data-testid="progress-text" style="font-size:12px;color:var(--muted);margin-top:4px">0%</div>
+    </div>
+  </div>
+  <div style="margin-top:12px">
+    <button class="btn btn-warn btn-sm" onclick="simulateAjax()">Simulate AJAX (2s delay)</button>
+    <div id="ajax-result" data-testid="ajax-result" class="result" style="margin-top:8px">No request sent</div>
+  </div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+document.getElementById('header-user').textContent='👤 '+(sessionStorage.getItem('ap_user')||'admin');
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+function setResult(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block'}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function startSpinner(){
+  const sp=document.getElementById('spinner-el'),done=document.getElementById('spinner-done');
+  sp.style.display='block';done.style.display='none';
+  setTimeout(()=>{sp.style.display='none';done.style.display='block'},3000);
+}
+function startProgress(){
+  let p=0;const fill=document.getElementById('progress-fill'),txt=document.getElementById('progress-text');
+  const iv=setInterval(()=>{p+=5;fill.style.width=p+'%';txt.textContent=p+'%';if(p>=100)clearInterval(iv)},150);
+}
+function simulateAjax(){
+  setResult('ajax-result','⏳ Requesting...');
+  setTimeout(()=>setResult('ajax-result','✅ Response received: {"status":"ok","data":"employees loaded"}'),2000);
+}
+</script>
+</body>
+</html>

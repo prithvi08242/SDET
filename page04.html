@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Dropdowns — Automation Practice</title>
+<link rel="stylesheet" href="shared.css"/>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🎭 Automation Practice</h1>
+    <p>Section 04 of 30 · JavaScript / TypeScript</p>
+  </div>
+  <div class="badge-row">
+    <span class="badge">Playwright</span>
+    <span class="badge">Selenium</span>
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" data-testid="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+<div class="page-nav">
+  <a class="home-link" href="dashboard.html">🏠 Dashboard</a>
+  <span style="color:var(--border)">›</span>
+  <span style="font-size:12px;color:var(--text)">Section 04</span>
+  <div class="prev-next"><a href="page03.html">← 03</a><a href="page05.html">05 →</a></div>
+</div>
+<div class="container">
+<div class="section" id="s4">
+  <div class="section-header">
+    <div class="section-num">04</div>
+    <div><div class="section-title">Dropdowns</div>
+    <div class="section-desc">Standard select, multi-select, custom div dropdown, country autocomplete typeahead</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="form-group">
+      <label class="lbl">Standard Select</label>
+      <select id="select-color" data-testid="select-color" aria-label="Color select" onchange="setResult('select-result','Selected: '+this.value)">
+        <option value="">-- choose --</option>
+        <option value="Red">Red</option>
+        <option value="Green">Green</option>
+        <option value="Blue">Blue</option>
+        <option value="Purple">Purple</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="lbl">Multi-Select (Ctrl/Cmd + click)</label>
+      <select id="select-multi" multiple data-testid="select-multi" aria-label="Multi select" size="4" onchange="multiResult()" style="height:auto">
+        <option value="JavaScript">JavaScript</option>
+        <option value="TypeScript">TypeScript</option>
+        <option value="Python">Python</option>
+        <option value="Go">Go</option>
+      </select>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-top:8px">
+    <div>
+      <label class="lbl">Custom Div Dropdown</label>
+      <div id="custom-dropdown" style="position:relative;display:inline-block;width:100%">
+        <div id="custom-dd-trigger" data-testid="custom-dd-trigger" onclick="toggleCustomDD()"
+          style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:13px;display:flex;justify-content:space-between">
+          <span id="custom-dd-value">Choose...</span><span>▾</span>
+        </div>
+        <div id="custom-dd-menu" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface2);border:1px solid var(--border);border-radius:6px;z-index:10;margin-top:4px">
+          <div class="hm-dropdown" style="position:static;display:block;border:none">
+            <a href="#" data-testid="dd-opt-selenium" onclick="selectCustomDD('Selenium',event)">Selenium</a>
+            <a href="#" data-testid="dd-opt-playwright" onclick="selectCustomDD('Playwright',event)">Playwright</a>
+            <a href="#" data-testid="dd-opt-cypress" onclick="selectCustomDD('Cypress',event)">Cypress</a>
+            <a href="#" data-testid="dd-opt-appium" onclick="selectCustomDD('Appium',event)">Appium</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <label class="lbl">Country Autocomplete — type to search</label>
+      <div style="position:relative" id="autocomplete-wrap">
+        <input
+          id="country-input"
+          type="text"
+          data-testid="country-input"
+          aria-label="Country search"
+          aria-autocomplete="list"
+          aria-controls="country-suggestions"
+          aria-expanded="false"
+          autocomplete="off"
+          placeholder="e.g. type &quot;in&quot; → India, Indonesia…"
+          oninput="onCountryInput()"
+          onkeydown="onCountryKey(event)"
+        />
+        <ul
+          id="country-suggestions"
+          data-testid="country-suggestions"
+          role="listbox"
+          style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface2);border:1px solid var(--accent);border-radius:6px;margin-top:4px;z-index:50;max-height:200px;overflow-y:auto;list-style:none;padding:4px 0"
+        ></ul>
+        <div id="country-selected-badge" data-testid="country-selected-badge"
+          style="display:none;margin-top:6px;padding:5px 10px;background:var(--accent);color:#fff;border-radius:20px;font-size:12px;font-weight:600;display:inline-block">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="select-result" class="result" data-testid="select-result" style="margin-top:8px">Nothing selected</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+document.getElementById('header-user').textContent='👤 '+(sessionStorage.getItem('ap_user')||'admin');
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+function setResult(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block'}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function toggleCustomDD(){const m=document.getElementById('custom-dd-menu');m.style.display=m.style.display==='none'?'block':'none'}
+function selectCustomDD(val,e){e.preventDefault();document.getElementById('custom-dd-value').textContent=val;document.getElementById('custom-dd-menu').style.display='none';setResult('select-result','Custom selected: '+val)}
+function multiResult(){const vals=[...document.getElementById('select-multi').selectedOptions].map(o=>o.value);setResult('select-result','Multi selected: '+vals.join(', '))}
+// ── Country Autocomplete ──────────────────────────────────────────────
+const COUNTRIES = [
+  'Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda',
+  'Argentina','Armenia','Australia','Austria','Azerbaijan','Bahamas','Bahrain',
+  'Bangladesh','Barbados','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia',
+  'Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso',
+  'Burundi','Cabo Verde','Cambodia','Cameroon','Canada','Central African Republic',
+  'Chad','Chile','China','Colombia','Comoros','Congo','Costa Rica','Croatia','Cuba',
+  'Cyprus','Czech Republic','Denmark','Djibouti','Dominica','Dominican Republic',
+  'Ecuador','Egypt','El Salvador','Equatorial Guinea','Eritrea','Estonia','Eswatini',
+  'Ethiopia','Fiji','Finland','France','Gabon','Gambia','Georgia','Germany','Ghana',
+  'Greece','Grenada','Guatemala','Guinea','Guinea-Bissau','Guyana','Haiti','Honduras',
+  'Hungary','Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy',
+  'Jamaica','Japan','Jordan','Kazakhstan','Kenya','Kiribati','Kuwait','Kyrgyzstan',
+  'Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania',
+  'Luxembourg','Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Marshall Islands',
+  'Mauritania','Mauritius','Mexico','Micronesia','Moldova','Monaco','Mongolia','Montenegro',
+  'Morocco','Mozambique','Myanmar','Namibia','Nauru','Nepal','Netherlands','New Zealand',
+  'Nicaragua','Niger','Nigeria','North Korea','North Macedonia','Norway','Oman','Pakistan',
+  'Palau','Palestine','Panama','Papua New Guinea','Paraguay','Peru','Philippines','Poland',
+  'Portugal','Qatar','Romania','Russia','Rwanda','Saint Kitts and Nevis','Saint Lucia',
+  'Saint Vincent and the Grenadines','Samoa','San Marino','Saudi Arabia','Senegal','Serbia',
+  'Seychelles','Sierra Leone','Singapore','Slovakia','Slovenia','Solomon Islands','Somalia',
+  'South Africa','South Korea','South Sudan','Spain','Sri Lanka','Sudan','Suriname','Sweden',
+  'Switzerland','Syria','Taiwan','Tajikistan','Tanzania','Thailand','Timor-Leste','Togo',
+  'Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu','Uganda','Ukraine',
+  'United Arab Emirates','United Kingdom','United States','Uruguay','Uzbekistan','Vanuatu',
+  'Vatican City','Venezuela','Vietnam','Yemen','Zambia','Zimbabwe'
+];
+
+let acActiveIdx = -1;
+
+function onCountryInput() {
+  const q = document.getElementById('country-input').value.trim().toLowerCase();
+  const ul = document.getElementById('country-suggestions');
+  const input = document.getElementById('country-input');
+  acActiveIdx = -1;
+
+  if (q.length === 0) {
+    ul.style.display = 'none';
+    input.setAttribute('aria-expanded','false');
+    return;
+  }
+
+  const matches = COUNTRIES.filter(c => c.toLowerCase().includes(q)).slice(0, 8);
+
+  if (matches.length === 0) {
+    ul.style.display = 'none';
+    input.setAttribute('aria-expanded','false');
+    return;
+  }
+
+  ul.innerHTML = matches.map((c, i) => {
+    const hi = c.replace(new RegExp(`(${q})`, 'gi'), '<mark style="background:var(--accent);color:#fff;border-radius:2px;padding:0 2px">$1</mark>');
+    return `<li
+      role="option"
+      data-testid="country-option-${i}"
+      data-value="${c}"
+      style="padding:8px 14px;font-size:13px;cursor:pointer;color:var(--text)"
+      onmouseenter="acHover(this)"
+      onmouseleave="acUnhover(this)"
+      onclick="selectCountry('${c}')"
+    >${hi}</li>`;
+  }).join('');
+
+  ul.style.display = 'block';
+  input.setAttribute('aria-expanded','true');
+}
+
+function onCountryKey(e) {
+  const ul = document.getElementById('country-suggestions');
+  const items = ul.querySelectorAll('li');
+  if (!items.length) return;
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    acActiveIdx = Math.min(acActiveIdx + 1, items.length - 1);
+    acHighlight(items);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    acActiveIdx = Math.max(acActiveIdx - 1, 0);
+    acHighlight(items);
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (acActiveIdx >= 0 && items[acActiveIdx]) {
+      selectCountry(items[acActiveIdx].dataset.value);
+    }
+  } else if (e.key === 'Escape') {
+    ul.style.display = 'none';
+    document.getElementById('country-input').setAttribute('aria-expanded','false');
+  }
+}
+
+function acHighlight(items) {
+  items.forEach((li, i) => {
+    li.style.background = i === acActiveIdx ? 'var(--accent)' : '';
+    li.style.color = i === acActiveIdx ? '#fff' : 'var(--text)';
+  });
+}
+function acHover(li) { li.style.background='var(--surface)'; }
+function acUnhover(li) {
+  const i = [...li.parentElement.children].indexOf(li);
+  li.style.background = i === acActiveIdx ? 'var(--accent)' : '';
+}
+
+function selectCountry(val) {
+  document.getElementById('country-input').value = val;
+  document.getElementById('country-suggestions').style.display = 'none';
+  document.getElementById('country-input').setAttribute('aria-expanded','false');
+  const badge = document.getElementById('country-selected-badge');
+  badge.textContent = '✅ ' + val;
+  badge.style.display = 'inline-block';
+  setResult('select-result', 'Country selected: ' + val);
+  acActiveIdx = -1;
+}
+
+// Close on outside click
+document.addEventListener('click', e => {
+  if (!document.getElementById('autocomplete-wrap').contains(e.target)) {
+    document.getElementById('country-suggestions').style.display = 'none';
+  }
+});
+</script>
+</body>
+</html>
