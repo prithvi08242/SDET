@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Button Interactions — Automation Practice</title>
+<link rel="stylesheet" href="css/shared.css"/>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🎭 Automation Practice</h1>
+    <p>Section 02 of 30 · JavaScript / TypeScript</p>
+  </div>
+  <div class="badge-row">
+    <span class="badge">Playwright</span>
+    <span class="badge">Selenium</span>
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" data-testid="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+<div class="page-nav">
+  <a class="home-link" href="dashboard.html">🏠 Dashboard</a>
+  <span style="color:var(--border)">›</span>
+  <span style="font-size:12px;color:var(--text)">Section 02</span>
+  <div class="prev-next"><a href="page01.html">← 01</a><a href="page03.html">03 →</a></div>
+</div>
+<div class="container">
+<div class="section" id="s2">
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <div><div class="section-title">Button Interactions</div>
+    <div class="section-desc">Single click, double click, right click, disabled, delayed, relabel</div></div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:1rem">
+    <button id="btn-single" class="btn btn-primary" data-testid="btn-single" onclick="setResult('btn-result','Single clicked!')">Single Click</button>
+    <button id="btn-double" class="btn btn-success" data-testid="btn-double" ondblclick="setResult('btn-result','Double clicked!')">Double Click</button>
+    <button id="btn-right" class="btn btn-warn" data-testid="btn-right" oncontextmenu="setResult('btn-result','Right clicked!');return false">Right Click</button>
+    <button id="btn-disabled" class="btn btn-ghost" data-testid="btn-disabled" disabled>Always Disabled</button>
+    <button id="btn-delayed" class="btn btn-ghost" data-testid="btn-delayed" disabled onclick="setResult('btn-result','Delayed button clicked!')">Enables in 3s</button>
+    <button id="btn-relabel" class="btn btn-danger" data-testid="btn-relabel" onclick="relabel(this)">Original Label</button>
+  </div>
+  <div id="btn-result" class="result" data-testid="btn-result">No interaction yet</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+document.getElementById('header-user').textContent='👤 '+(sessionStorage.getItem('ap_user')||'admin');
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+function setResult(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block'}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+setTimeout(()=>{const b=document.getElementById('btn-delayed');b.disabled=false;b.textContent='Now Enabled!'},3000);
+function relabel(btn){btn.textContent=btn.textContent==='Original Label'?'Relabelled!':'Original Label'}
+</script>
+</body>
+</html>

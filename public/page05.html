@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Locator Practice — Automation Practice</title>
+<link rel="stylesheet" href="css/shared.css"/>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🎭 Automation Practice</h1>
+    <p>Section 05 of 30 · JavaScript / TypeScript</p>
+  </div>
+  <div class="badge-row">
+    <span class="badge">Playwright</span>
+    <span class="badge">Selenium</span>
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" data-testid="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+<div class="page-nav">
+  <a class="home-link" href="dashboard.html">🏠 Dashboard</a>
+  <span style="color:var(--border)">›</span>
+  <span style="font-size:12px;color:var(--text)">Section 05</span>
+  <div class="prev-next"><a href="page04.html">← 04</a><a href="page06.html">06 →</a></div>
+</div>
+<div class="container">
+<div class="section" id="s5">
+  <div class="section-header">
+    <div class="section-num">05</div>
+    <div><div class="section-title">Locator Practice</div>
+    <div class="section-desc">id, class, name, data-testid, aria-label, placeholder, XPath axes</div></div>
+  </div>
+  <div class="grid-2">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div id="locator-by-id" style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px">By id → <code>#locator-by-id</code></div>
+      <div class="locator-by-class" style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px">By class → <code>.locator-by-class</code></div>
+      <input name="locator-name" type="text" placeholder="By name=[locator-name]" data-testid="locator-name-input"/>
+      <div data-testid="locator-by-testid" style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px">By data-testid</div>
+      <div aria-label="locator-aria" style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px">By aria-label</div>
+      <input type="text" placeholder="By placeholder text" data-testid="locator-placeholder"/>
+    </div>
+    <div>
+      <div style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px;margin-bottom:8px" id="exact-text-target">ExactTextTarget</div>
+      <div style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px;margin-bottom:8px">Contains <strong>PartialMatch</strong> here</div>
+      <div data-css="css-only" style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:13px;margin-bottom:8px">CSS only → <code>[data-css='css-only']</code></div>
+      <div id="xpath-grandparent" style="padding:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:12px">
+        grandparent
+        <div id="xpath-parent" style="margin:4px;padding:6px;background:var(--bg);border:1px solid var(--border);border-radius:4px">
+          parent
+          <span id="xpath-child1" style="margin:4px;display:inline-block;padding:3px 8px;background:var(--accent);color:#fff;border-radius:4px;font-size:11px">child 1</span>
+          <span id="xpath-child2" style="margin:4px;display:inline-block;padding:3px 8px;background:var(--accent2);color:#111;border-radius:4px;font-size:11px">child 2 <em>leaf</em></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+document.getElementById('header-user').textContent='👤 '+(sessionStorage.getItem('ap_user')||'admin');
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+function setResult(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block'}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+
+</script>
+</body>
+</html>

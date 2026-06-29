@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Login — Automation Practice</title>
+<link rel="stylesheet" href="css/shared.css"/>
+<style>
+.auth-tabs{display:flex;gap:0;margin-bottom:1.5rem;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.auth-tab{flex:1;padding:9px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;background:var(--surface2);color:var(--muted);border:none;font-family:var(--font);transition:all .15s}
+.auth-tab.active{background:var(--accent);color:#fff}
+.auth-panel{display:none}
+.auth-panel.active{display:block}
+.login-success{display:none;background:#5dcaa522;border:1px solid var(--accent2);color:var(--accent2);border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:1rem}
+.pw-strength{height:4px;border-radius:2px;margin-top:4px;transition:all .3s;background:var(--border)}
+.pw-weak{background:var(--danger);width:33%}
+.pw-medium{background:var(--warn);width:66%}
+.pw-strong{background:var(--accent2);width:100%}
+.pw-label{font-size:11px;color:var(--muted);margin-top:3px}
+</style>
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="logo">
+      <span>🎭</span>
+      <h2>Automation Practice</h2>
+      <p>Playwright &amp; Selenium · JavaScript / TypeScript</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="auth-tabs" data-testid="auth-tabs">
+      <button class="auth-tab active" data-testid="tab-signin" onclick="switchAuthTab('signin',this)">Sign In</button>
+      <button class="auth-tab" data-testid="tab-signup" onclick="switchAuthTab('signup',this)">Sign Up</button>
+    </div>
+
+    <!-- ── SIGN IN PANEL ── -->
+    <div class="auth-panel active" id="panel-signin">
+      <div class="login-error" id="login-error">❌ Invalid credentials. Please try again.</div>
+      <div class="form-group">
+        <label class="lbl" for="login-username">Username</label>
+        <input id="login-username" type="text" data-testid="login-username" aria-label="Username"
+          placeholder="Enter username" autocomplete="username"/>
+      </div>
+      <div class="form-group">
+        <label class="lbl" for="login-password">Password</label>
+        <input id="login-password" type="password" data-testid="login-password" aria-label="Password"
+          placeholder="Enter password" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:.25rem" data-testid="btn-login" onclick="doLogin()">
+        Sign In
+      </button>
+      <div class="login-hint">
+        Default: &nbsp;<code>admin</code> / <code>admin123</code>
+      </div>
+    </div>
+
+    <!-- ── SIGN UP PANEL ── -->
+    <div class="auth-panel" id="panel-signup">
+      <div class="login-error" id="signup-error"></div>
+      <div class="login-success" id="signup-success">✅ Account created! You can now sign in.</div>
+      <div class="grid-2" style="gap:8px">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="lbl" for="signup-firstname">First Name</label>
+          <input id="signup-firstname" type="text" data-testid="signup-firstname" aria-label="First Name" placeholder="Jane"/>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="lbl" for="signup-lastname">Last Name</label>
+          <input id="signup-lastname" type="text" data-testid="signup-lastname" aria-label="Last Name" placeholder="Doe"/>
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:8px">
+        <label class="lbl" for="signup-email">Email</label>
+        <input id="signup-email" type="email" data-testid="signup-email" aria-label="Email" placeholder="jane@example.com"/>
+      </div>
+      <div class="form-group">
+        <label class="lbl" for="signup-username">Username</label>
+        <input id="signup-username" type="text" data-testid="signup-username" aria-label="New Username" placeholder="Choose a username"/>
+      </div>
+      <div class="form-group">
+        <label class="lbl" for="signup-password">Password</label>
+        <input id="signup-password" type="password" data-testid="signup-password" aria-label="New Password"
+          placeholder="Min 6 characters" oninput="checkPwStrength(this.value)"/>
+        <div class="pw-strength" id="pw-strength-bar"></div>
+        <div class="pw-label" id="pw-strength-label"></div>
+      </div>
+      <div class="form-group">
+        <label class="lbl" for="signup-confirm">Confirm Password</label>
+        <input id="signup-confirm" type="password" data-testid="signup-confirm" aria-label="Confirm Password"
+          placeholder="Re-enter password" onkeydown="if(event.key==='Enter')doSignup()"/>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:.75rem;font-size:13px">
+        <input id="signup-terms" type="checkbox" data-testid="signup-terms" style="width:16px;height:16px;accent-color:var(--accent)"/>
+        <label for="signup-terms" style="cursor:pointer;color:var(--muted)">I agree to the <span style="color:var(--accent)">Terms &amp; Conditions</span></label>
+      </div>
+      <button class="btn btn-success" style="width:100%" data-testid="btn-signup" onclick="doSignup()">
+        Create Account
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Registered users store (seed with default) ───────────────────────
+function getUsers(){
+  const raw=localStorage.getItem('ap_users');
+  return raw?JSON.parse(raw):{admin:{password:'admin123',firstName:'Admin',lastName:'User',email:'admin@practice.com'}};
+}
+function saveUsers(u){localStorage.setItem('ap_users',JSON.stringify(u));}
+
+// ── Tab switch ────────────────────────────────────────────────────────
+function switchAuthTab(tab,btn){
+  document.querySelectorAll('.auth-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.auth-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+  document.getElementById('login-error').style.display='none';
+  document.getElementById('signup-error').style.display='none';
+  document.getElementById('signup-success').style.display='none';
+}
+
+// ── Sign In ───────────────────────────────────────────────────────────
+function doLogin(){
+  const u=document.getElementById('login-username').value.trim();
+  const p=document.getElementById('login-password').value;
+  const err=document.getElementById('login-error');
+  const users=getUsers();
+  if(users[u]&&users[u].password===p){
+    sessionStorage.setItem('ap_auth','1');
+    sessionStorage.setItem('ap_user',u);
+    sessionStorage.setItem('ap_fullname',(users[u].firstName||u)+' '+(users[u].lastName||''));
+    window.location.href='dashboard.html';
+  } else {
+    err.style.display='block';
+    document.getElementById('login-password').value='';
+    document.getElementById('login-password').focus();
+  }
+}
+
+// ── Sign Up ───────────────────────────────────────────────────────────
+function checkPwStrength(val){
+  const bar=document.getElementById('pw-strength-bar');
+  const lbl=document.getElementById('pw-strength-label');
+  bar.className='pw-strength';
+  if(!val){lbl.textContent='';return;}
+  if(val.length<4){bar.classList.add('pw-weak');lbl.textContent='Weak';}
+  else if(val.length<8||!/[0-9]/.test(val)){bar.classList.add('pw-medium');lbl.textContent='Medium';}
+  else{bar.classList.add('pw-strong');lbl.textContent='Strong';}
+}
+
+function doSignup(){
+  const fn=document.getElementById('signup-firstname').value.trim();
+  const ln=document.getElementById('signup-lastname').value.trim();
+  const em=document.getElementById('signup-email').value.trim();
+  const u=document.getElementById('signup-username').value.trim();
+  const p=document.getElementById('signup-password').value;
+  const c=document.getElementById('signup-confirm').value;
+  const terms=document.getElementById('signup-terms').checked;
+  const err=document.getElementById('signup-error');
+  const ok=document.getElementById('signup-success');
+  err.style.display='none';ok.style.display='none';
+
+  if(!fn||!ln||!em||!u||!p){err.textContent='❌ All fields are required.';err.style.display='block';return;}
+  if(p.length<6){err.textContent='❌ Password must be at least 6 characters.';err.style.display='block';return;}
+  if(p!==c){err.textContent='❌ Passwords do not match.';err.style.display='block';return;}
+  if(!terms){err.textContent='❌ Please accept the Terms & Conditions.';err.style.display='block';return;}
+
+  const users=getUsers();
+  if(users[u]){err.textContent='❌ Username already taken. Choose another.';err.style.display='block';return;}
+
+  users[u]={password:p,firstName:fn,lastName:ln,email:em};
+  saveUsers(users);
+  ok.style.display='block';
+
+  // Auto-switch to sign-in after 1.5s
+  setTimeout(()=>{
+    document.getElementById('signup-username').value='';
+    document.getElementById('signup-password').value='';
+    document.getElementById('signup-confirm').value='';
+    document.getElementById('login-username').value=u;
+    switchAuthTab('signin',document.querySelector('[data-testid="tab-signin"]'));
+  },1500);
+}
+
+if(sessionStorage.getItem('ap_auth')==='1') window.location.href='dashboard.html';
+</script>
+</body>
+</html>

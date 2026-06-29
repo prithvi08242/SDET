@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Keyboard Actions — Automation Practice</title>
+<link rel="stylesheet" href="css/shared.css"/>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🎭 Automation Practice</h1>
+    <p>Section 26 of 30 · JavaScript / TypeScript</p>
+  </div>
+  <div class="badge-row">
+    <span class="badge">Playwright</span>
+    <span class="badge">Selenium</span>
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" data-testid="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+<div class="page-nav">
+  <a class="home-link" href="dashboard.html">🏠 Dashboard</a>
+  <span style="color:var(--border)">›</span>
+  <span style="font-size:12px;color:var(--text)">Section 26</span>
+  <div class="prev-next"><a href="page25.html">← 25</a><a href="page27.html">27 →</a></div>
+</div>
+<div class="container">
+<div class="section" id="s26">
+  <div class="section-header">
+    <div class="section-num">26</div>
+    <div><div class="section-title">Keyboard Actions</div>
+    <div class="section-desc">sendKeys, keyboard shortcuts, arrow keys, Enter, Tab, Ctrl+A</div></div>
+  </div>
+  <div class="grid-2">
+    <div>
+      <input id="keyboard-input" type="text" data-testid="keyboard-input" aria-label="Keyboard input"
+        placeholder="Type here — watch last key" onkeydown="trackKey(event)"/>
+      <div id="last-key" data-testid="last-key" class="result" style="margin-top:8px">Last key: None</div>
+    </div>
+    <div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Arrow Up/Down counter:</div>
+      <div id="arrow-counter" data-testid="arrow-counter" style="font-size:2rem;font-weight:700;color:var(--accent);text-align:center">0</div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+document.getElementById('header-user').textContent='👤 '+(sessionStorage.getItem('ap_user')||'admin');
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+function setResult(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block'}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+let arrowCount=0;
+function trackKey(e){
+  document.getElementById('last-key').textContent='Last key: '+e.key;
+  if(e.key==='ArrowUp'){arrowCount++;document.getElementById('arrow-counter').textContent=arrowCount}
+  if(e.key==='ArrowDown'){arrowCount--;document.getElementById('arrow-counter').textContent=arrowCount}
+}
+</script>
+</body>
+</html>

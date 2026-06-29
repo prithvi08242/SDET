@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Complex DOM Structure — Automation Practice</title>
+<link rel="stylesheet" href="css/shared.css"/>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🎭 Automation Practice</h1>
+    <p>Section 30 of 30 · JavaScript / TypeScript</p>
+  </div>
+  <div class="badge-row">
+    <span class="badge">Playwright</span>
+    <span class="badge">Selenium</span>
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" data-testid="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+<div class="page-nav">
+  <a class="home-link" href="dashboard.html">🏠 Dashboard</a>
+  <span style="color:var(--border)">›</span>
+  <span style="font-size:12px;color:var(--text)">Section 30</span>
+  <div class="prev-next"><a href="page29.html">← 29</a></div>
+</div>
+<div class="container">
+<div class="section" id="s30">
+  <div class="section-header">
+    <div class="section-num">30</div>
+    <div><div class="section-title">Complex DOM Structure</div>
+    <div class="section-desc">Advanced XPath axes and CSS combinators on deeply nested tree</div></div>
+  </div>
+  <div id="complex-root" data-testid="complex-root" style="font-size:13px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px">
+    <div class="complex-grandparent" data-testid="complex-grandparent" style="padding:8px;border:1px solid var(--border);border-radius:6px;margin-bottom:8px">
+      grandparent
+      <div class="complex-parent" data-testid="complex-parent-1" style="margin:6px 0;padding:6px;background:var(--bg);border-radius:4px">
+        parent 1
+        <div style="display:flex;gap:6px;margin-top:4px">
+          <span class="complex-child" data-testid="complex-child-1a" style="padding:3px 8px;background:var(--accent);color:#fff;border-radius:4px;font-size:11px">child 1a <em class="complex-leaf" data-testid="leaf-1a">leaf 1a</em></span>
+          <span class="complex-child" data-testid="complex-child-1b" style="padding:3px 8px;background:var(--accent2);color:#111;border-radius:4px;font-size:11px">child 1b <em class="complex-leaf" data-testid="leaf-1b">leaf 1b</em></span>
+        </div>
+      </div>
+      <div class="complex-parent" data-testid="complex-parent-2" style="margin:6px 0;padding:6px;background:var(--bg);border-radius:4px">
+        parent 2 (sibling)
+        <ul style="margin-top:4px;margin-left:16px;font-size:12px;color:var(--muted)">
+          <li data-testid="list-item-1">list leaf 1</li>
+          <li data-testid="list-item-2">list leaf 2</li>
+          <li data-testid="list-item-3">list leaf 3</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+document.getElementById('header-user').textContent='👤 '+(sessionStorage.getItem('ap_user')||'admin');
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+function setResult(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block'}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+
+</script>
+</body>
+</html>

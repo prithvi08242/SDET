@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Multiple Windows / Tabs — Automation Practice</title>
+<link rel="stylesheet" href="css/shared.css"/>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🎭 Automation Practice</h1>
+    <p>Section 20 of 30 · JavaScript / TypeScript</p>
+  </div>
+  <div class="badge-row">
+    <span class="badge">Playwright</span>
+    <span class="badge">Selenium</span>
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" data-testid="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+<div class="page-nav">
+  <a class="home-link" href="dashboard.html">🏠 Dashboard</a>
+  <span style="color:var(--border)">›</span>
+  <span style="font-size:12px;color:var(--text)">Section 20</span>
+  <div class="prev-next"><a href="page19.html">← 19</a><a href="page21.html">21 →</a></div>
+</div>
+<div class="container">
+<div class="section" id="s20">
+  <div class="section-header">
+    <div class="section-num">20</div>
+    <div><div class="section-title">Multiple Windows / Tabs</div>
+    <div class="section-desc">Open new tab, switch window handles, assert on new tab content</div></div>
+  </div>
+  <button class="btn btn-primary" data-testid="btn-new-tab" onclick="window.open('https://example.com','_blank');setResult('window-result','New tab opened — switch to it in your test')">Open New Tab</button>
+  <div id="window-result" data-testid="window-result" class="result" style="margin-top:8px">No window opened yet</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+document.getElementById('header-user').textContent='👤 '+(sessionStorage.getItem('ap_user')||'admin');
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+function setResult(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block'}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+
+</script>
+</body>
+</html>

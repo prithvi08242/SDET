@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Download — Automation Practice</title>
+<link rel="stylesheet" href="css/shared.css"/>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🎭 Automation Practice</h1>
+    <p>Section 17 of 30 · JavaScript / TypeScript</p>
+  </div>
+  <div class="badge-row">
+    <span class="badge">Playwright</span>
+    <span class="badge">Selenium</span>
+    <span id="header-user" style="font-size:12px;color:var(--muted)"></span>
+    <button class="logout-btn" data-testid="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</header>
+<div class="page-nav">
+  <a class="home-link" href="dashboard.html">🏠 Dashboard</a>
+  <span style="color:var(--border)">›</span>
+  <span style="font-size:12px;color:var(--text)">Section 17</span>
+  <div class="prev-next"><a href="page16.html">← 16</a><a href="page18.html">18 →</a></div>
+</div>
+<div class="container">
+<div class="section" id="s17">
+  <div class="section-header">
+    <div class="section-num">17</div>
+    <div><div class="section-title">Download</div>
+    <div class="section-desc">Trigger a file download and assert it completed</div></div>
+  </div>
+  <button class="btn btn-success" data-testid="btn-download" onclick="downloadFile()">Download practice.txt</button>
+  <div id="download-result" data-testid="download-result" class="result" style="margin-top:8px">Not downloaded yet</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+if(sessionStorage.getItem('ap_auth')!=='1') window.location.href='index.html';
+document.getElementById('header-user').textContent='👤 '+(sessionStorage.getItem('ap_user')||'admin');
+function doLogout(){sessionStorage.clear();window.location.href='index.html';}
+function setResult(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block'}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function downloadFile(){
+  const a=document.createElement('a');
+  a.href='data:text/plain;charset=utf-8,Practice file for Playwright and Selenium testing.\nLine 2\nLine 3';
+  a.download='practice.txt';a.click();
+  setResult('download-result','✅ Download triggered: practice.txt');
+}
+</script>
+</body>
+</html>
