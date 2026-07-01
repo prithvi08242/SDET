@@ -6,7 +6,7 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
-    stpes:
+    steps:
     - name: Checkout Code
       uses: actions/checkout@v5
      
